@@ -12,8 +12,8 @@ const Login = () => {
   const handleClick = async () => {
     try {
       await axios.post("http://localhost:3000/api/login", {
-        username,
-        password,
+        username: this.state.username,
+        password: password,
       });
       router.push("/admin");
     } catch (error) {
