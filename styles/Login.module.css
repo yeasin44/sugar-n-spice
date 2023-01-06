@@ -1,0 +1,30 @@
+.container {
+  height: calc(100vh - 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.title {
+  font-size: 30px;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.input {
+  height: 40px;
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 0 10px;
+}
+.button {
+  width: 100%;
+  background: teal;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+.error {
+  font-size: 15px;
+  color: red;
+}
