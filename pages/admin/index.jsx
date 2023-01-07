@@ -3,25 +3,27 @@ import Image from "next/image";
 import { useState } from "react";
 import styles from "../../styles/Admin.module.css";
 
-const index = ({ orders, products }) => {
+const Index = ({ orders, products }) => {
   const [pizzaList, setPizzaList] = useState(products);
   const [orderList, setOrderList] = useState(orders);
-
   const status = ["preparing", "on the way", "delivered"];
+
   const handleDelete = async (id) => {
+    console.log(id);
     try {
       const res = await axios.delete(
         "http://localhost:3000/api/products/" + id
       );
       setPizzaList(pizzaList.filter((pizza) => pizza._id !== id));
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err.response.data);
     }
   };
 
   const handleStatus = async (id) => {
     const item = orderList.filter((order) => order._id === id)[0];
     const currentStatus = item.status;
+
     try {
       const res = await axios.put("http://localhost:3000/api/orders/" + id, {
         status: currentStatus + 1,
@@ -30,14 +32,15 @@ const index = ({ orders, products }) => {
         res.data,
         ...orderList.filter((order) => order._id !== id),
       ]);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
     }
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.item}>
-        <h2 className={styles.title}>Products</h2>
+        <h1 className={styles.title}>Products</h1>
         <table className={styles.table}>
           <tbody>
             <tr className={styles.trTitle}>
@@ -56,8 +59,8 @@ const index = ({ orders, products }) => {
                     src={product.img}
                     width={50}
                     height={50}
-                    alt=""
                     objectFit="cover"
+                    alt=""
                   />
                 </td>
                 <td>{product._id.slice(0, 5)}...</td>
@@ -78,13 +81,13 @@ const index = ({ orders, products }) => {
         </table>
       </div>
       <div className={styles.item}>
-        <h2 className={styles.title}>Orders</h2>
-        <table>
-          <tbody className={styles.table}>
+        <h1 className={styles.title}>Orders</h1>
+        <table className={styles.table}>
+          <tbody>
             <tr className={styles.trTitle}>
               <th>Id</th>
               <th>Customer</th>
-              <th>Price</th>
+              <th>Total</th>
               <th>Payment</th>
               <th>Status</th>
               <th>Action</th>
@@ -97,15 +100,12 @@ const index = ({ orders, products }) => {
                 <td>{order.customer}</td>
                 <td>${order.total}</td>
                 <td>
-                  {order.method === 0 ? <span>Cash</span> : <span>Paid</span>}
+                  {order.method === 0 ? <span>cash</span> : <span>paid</span>}
                 </td>
                 <td>{status[order.status]}</td>
                 <td>
-                  <button
-                    className={styles.buttonNext}
-                    onClick={() => handleStatus(order._id)}
-                  >
-                    Next stage
+                  <button onClick={() => handleStatus(order._id)}>
+                    Next Stage
                   </button>
                 </td>
               </tr>
@@ -128,8 +128,10 @@ export const getServerSideProps = async (ctx) => {
       },
     };
   }
+
   const productRes = await axios.get("http://localhost:3000/api/products");
   const orderRes = await axios.get("http://localhost:3000/api/orders");
+
   return {
     props: {
       orders: orderRes.data,
@@ -137,4 +139,5 @@ export const getServerSideProps = async (ctx) => {
     },
   };
 };
-export default index;
+
+export default Index;

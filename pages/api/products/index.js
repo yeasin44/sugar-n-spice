@@ -1,9 +1,8 @@
 import dbConnect from "../.././../utilities/mongo";
 import Product from "../../../models/Product";
 export default async function handler(req, res) {
-  const { method, cookies } = req;
+  const { method } = req;
 
-  const token = cookies.token;
   dbConnect();
   if (method === "GET") {
     try {
@@ -14,9 +13,9 @@ export default async function handler(req, res) {
     }
   }
   if (method === "POST") {
-    if (!token || token !== process.env.token) {
-      return res.status(401).json("unauthorized");
-    }
+    // if (!token || token !== process.env.token) {
+    //   return res.status(401).json("unauthorized");
+    // }
     try {
       const product = await Product.create(req.body);
       res.status(201).json(product);

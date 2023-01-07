@@ -1,14 +1,21 @@
-import axios from "axios";
 import { useState } from "react";
 import styles from "../styles/Add.module.css";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const Add = ({ setClose }) => {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
   const [prices, setPrices] = useState([]);
-  const [extra, setExtra] = useState(null);
   const [extraOptions, setExtraOptions] = useState([]);
+  const [extra, setExtra] = useState(null);
+
+  const changePrice = (e, index) => {
+    const currentPrices = prices;
+    currentPrices[index] = e.target.value;
+    setPrices(currentPrices);
+  };
 
   const handleExtraInput = (e) => {
     setExtra({ ...extra, [e.target.name]: e.target.value });
@@ -17,8 +24,6 @@ const Add = ({ setClose }) => {
   const handleExtra = (e) => {
     setExtraOptions((prev) => [...prev, extra]);
   };
-
-  const changePrice = () => {};
 
   const handleCreate = async () => {
     const data = new FormData();
@@ -29,6 +34,7 @@ const Add = ({ setClose }) => {
         "https://api.cloudinary.com/v1_1/dt6zwx4ob/image/upload",
         data
       );
+
       const { url } = uploadRes.data;
       const newProduct = {
         title,
@@ -37,26 +43,24 @@ const Add = ({ setClose }) => {
         extraOptions,
         img: url,
       };
+
       await axios.post("http://localhost:3000/api/products", newProduct);
       setClose(true);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
     }
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <span onClick={() => setClose(true)} className={styles.close}>
           X
         </span>
-        <h1 className={styles.title}>Add a new Pizza</h1>
+        <h1>Add a new Pizza</h1>
         <div className={styles.item}>
           <label className={styles.label}>Choose an image</label>
-          <input
-            className={StyleSheet.file}
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
+          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
         </div>
         <div className={styles.item}>
           <label className={styles.label}>Title</label>
@@ -69,7 +73,6 @@ const Add = ({ setClose }) => {
         <div className={styles.item}>
           <label className={styles.label}>Desc</label>
           <textarea
-            className={styles.desc}
             rows={4}
             type="text"
             onChange={(e) => setDesc(e.target.value)}

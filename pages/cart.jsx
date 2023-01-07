@@ -1,7 +1,6 @@
+import styles from "../styles/Cart.module.css";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import styles from ".././styles/Cart.module.css";
-
 import { useEffect, useState } from "react";
 import {
   PayPalScriptProvider,
@@ -10,7 +9,7 @@ import {
 } from "@paypal/react-paypal-js";
 import axios from "axios";
 import { useRouter } from "next/router";
-import reset from "../redux/cartSlice";
+import { reset } from "../redux/cartSlice";
 import OrderDetail from "../components/OrderDetail";
 
 const Cart = () => {
@@ -20,17 +19,18 @@ const Cart = () => {
   const amount = cart.total;
   const currency = "USD";
   const style = { layout: "vertical" };
-
   const dispatch = useDispatch();
   const router = useRouter();
 
   const createOrder = async (data) => {
     try {
       const res = await axios.post("http://localhost:3000/api/orders", data);
-      res.status === 201 && router.push("/orders/" + res.data._id);
-      dispatch(reset());
-    } catch (error) {
-      console.log(error);
+      if (res.status === 201) {
+        dispatch(reset());
+        router.push(`/orders/${res.data._id}`);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -90,6 +90,7 @@ const Cart = () => {
       </>
     );
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -145,7 +146,7 @@ const Cart = () => {
       </div>
       <div className={styles.right}>
         <div className={styles.wrapper}>
-          <h2 className={styles.title}>Cart Total</h2>
+          <h2 className={styles.title}>CART TOTAL</h2>
           <div className={styles.totalText}>
             <b className={styles.totalTextTitle}>Subtotal:</b>${cart.total}
           </div>
@@ -156,12 +157,12 @@ const Cart = () => {
             <b className={styles.totalTextTitle}>Total:</b>${cart.total}
           </div>
           {open ? (
-            <div className={styles.paymentMethod}>
+            <div className={styles.paymentMethods}>
               <button
                 className={styles.payButton}
                 onClick={() => setCash(true)}
               >
-                Cash on delivery
+                CASH ON DELIVERY
               </button>
               <PayPalScriptProvider
                 options={{
@@ -177,7 +178,7 @@ const Cart = () => {
             </div>
           ) : (
             <button onClick={() => setOpen(true)} className={styles.button}>
-              Checkout Now
+              CHECKOUT NOW!
             </button>
           )}
         </div>
